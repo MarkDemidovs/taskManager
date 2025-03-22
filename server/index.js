@@ -35,6 +35,47 @@ app.post("/api/tasks", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.put("/api/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params; // Get task ID from the URL
+    const { name, completed } = req.body; // Get updated data from the request body
+
+    const result = await pool.query(
+      "UPDATE tasks SET name = $1, completed = $2 WHERE id = $3 RETURNING *",
+      [name, completed, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json(result.rows[0]); // Send back the updated task
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+app.delete("/api/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      "DELETE FROM tasks WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
