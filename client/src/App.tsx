@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Search from "./Search";
 export default function App() {
-  const [tasks, setTasks] = useState<string[]>([])
+  const [tasks, setTasks] = useState<string[]>([]);
 
   useEffect(() => {
     axios
@@ -17,18 +18,14 @@ export default function App() {
 
   useEffect(() => {
     console.log("Updated Tasks: ", tasks);
-
   }, [tasks]);
 
   return (
-    
-    <div>
-
-      {tasks.map((task, index)=>(
+    <>
+      <Search />
+      {tasks.map((task, index) => (
         <h1 key={index}>{task}</h1>
       ))}
-
-    </div>
-
-  )
+    </>
+  );
 }
